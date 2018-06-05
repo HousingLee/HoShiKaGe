@@ -1,14 +1,22 @@
-package com.alibaba.dubbo.performance.demo.agent.dubbo.model;
+package com.alibaba.dubbo.performance.demo.agent.consumer.commodel;
 
-import java.util.concurrent.*;
 
-public class RpcFuture implements Future<Object> {
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author HousingLee
+ * @Description: ${todo}
+ * @date 2018/6/5上午11:03
+ */
+public class CommFuture implements Future<Object> {
     private CountDownLatch latch = new CountDownLatch(1);
 
-    private RpcResponse response;
+    private CommResponse response;
 
     @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
+    public boolean cancel(boolean ifCancel) {
         return false;
     }
 
@@ -24,7 +32,6 @@ public class RpcFuture implements Future<Object> {
 
     @Override
     public byte[] get() throws InterruptedException {
-         //boolean b = latch.await(100, TimeUnit.MICROSECONDS);
         latch.await();
         try {
             return response.getBytes();
@@ -40,7 +47,7 @@ public class RpcFuture implements Future<Object> {
         return response.getBytes();
     }
 
-    public void done(RpcResponse response){
+    public void done(CommResponse response){
         this.response = response;
         latch.countDown();
     }

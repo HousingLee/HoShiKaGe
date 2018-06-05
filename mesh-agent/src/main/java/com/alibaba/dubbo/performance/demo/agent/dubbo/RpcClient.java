@@ -21,11 +21,11 @@ public class RpcClient {
 
     private ConnecManager connectManager;
 
-    public RpcClient(IRegistry registry){
+    public RpcClient(){
         this.connectManager = new ConnecManager();
     }
 
-    public Object invoke(String interfaceName, String method, String parameterTypesString, String parameter) throws Exception {
+    public byte[] invoke(String interfaceName, String method, String parameterTypesString, String parameter) throws Exception {
 
         Channel channel = connectManager.getChannel();
 
@@ -51,7 +51,7 @@ public class RpcClient {
 
         channel.writeAndFlush(request);
 
-        Object result = null;
+        byte[] result = null;
         try {
             result = future.get();
         }catch (Exception e){

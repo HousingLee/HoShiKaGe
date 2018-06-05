@@ -43,7 +43,11 @@ public class EtcdRegistry implements IRegistry{
             // 如果是provider，去etcd注册服务
             try {
                 int port = Integer.valueOf(System.getProperty("server.port"));
-                register("com.alibaba.dubbo.performance.demo.provider.IHelloService",port);
+
+                //size用来标识Provider的大小，在我们的场景里面，有大中小三种型号
+                String size = System.getProperty("server.size");
+
+                register("com.alibaba.dubbo.performance.demo.provider.IHelloService",port,size);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -51,9 +55,9 @@ public class EtcdRegistry implements IRegistry{
     }
 
     // 向ETCD中注册服务
-    public void register(String serviceName,int port) throws Exception {
-        // 服务注册的key为:    /dubbomesh/com.some.package.IHelloService/192.168.100.100:2000
-        String strKey = MessageFormat.format("/{0}/{1}/{2}:{3}",rootPath,serviceName,IpHelper.getHostIp(),String.valueOf(port));
+    public void register(String serviceName,int port,String size) throws Exception {
+        // 服务注册的key为:    /dubbomesh/com.some.package.IHelloService/small or mid or big/192.168.100.100:2000
+        String strKey = MessageFormat.format("/{0}/{1}/{2}/{3}:{4}",rootPath,serviceName,size,IpHelper.getHostIp(),String.valueOf(port));
         ByteSequence key = ByteSequence.fromString(strKey);
         ByteSequence val = ByteSequence.fromString("");     // 目前只需要创建这个key,对应的value暂不使用,先留空
         kv.put(key,val, PutOption.newBuilder().withLeaseId(leaseId).build()).get();
@@ -89,7 +93,20 @@ public class EtcdRegistry implements IRegistry{
             String host = endpointStr.split(":")[0];
             int port = Integer.valueOf(endpointStr.split(":")[1]);
 
-            endpoints.add(new Endpoint(host,port));
+            //三种不同规格的provider的权重不同，为1:2:3
+            if(s.contains("big")){
+                endpoints.add(new Endpoint(host,port,"big"));
+                endpoints.add(new Endpoint(host,port,"big"));
+                endpoints.add(new Endpoint(host,port,"big"));
+            }
+            else if(s.contains("mid")){
+                endpoints.add(new Endpoint(host,port,"mid"));
+                endpoints.add(new Endpoint(host,port,"mid"));
+            }
+            else{
+                endpoints.add(new Endpoint(host,port,"small"));
+            }
+
         }
         return endpoints;
     }
