@@ -31,10 +31,6 @@ public class HelloController {
     private Object lock = new Object();
     //private OkHttpClient httpClient = new OkHttpClient();
 
-    public HelloController(){
-
-    }
-
     @RequestMapping(value = "")
     public Object invoke(@RequestParam("interface") String interfaceName,
                          @RequestParam("method") String method,

@@ -94,7 +94,7 @@ public class EtcdRegistry implements IRegistry{
             int port = Integer.valueOf(endpointStr.split(":")[1]);
 
             //三种不同规格的provider的权重不同，为1:2:3
-            if(s.contains("big")){
+            /*if(s.contains("big")){
                 endpoints.add(new Endpoint(host,port,"big"));
                 endpoints.add(new Endpoint(host,port,"big"));
                 endpoints.add(new Endpoint(host,port,"big"));
@@ -105,9 +105,17 @@ public class EtcdRegistry implements IRegistry{
             }
             else{
                 endpoints.add(new Endpoint(host,port,"small"));
-            }
+            }*/
 
         }
+        endpoints.add(new Endpoint("10.10.10.5",30000,"big"));
+        endpoints.add(new Endpoint("10.10.10.5",30000,"big"));
+        endpoints.add(new Endpoint("10.10.10.5",30000,"big"));
+        endpoints.add(new Endpoint("10.10.10.4",30000,"mid"));
+        endpoints.add(new Endpoint("10.10.10.4",30000,"mid"));
+        endpoints.add(new Endpoint("10.10.10.3",30000,"small"));
+
+
         return endpoints;
     }
 }
