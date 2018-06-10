@@ -72,7 +72,7 @@ public class MultiConnManager {
                 if (null == midBootstrap) {
                     synchronized (lock) {
                         if (null == midBootstrap) {
-                            initSmallBootstrap();
+                            initMidBootstrap();
                         }
                     }
                 }
@@ -95,7 +95,7 @@ public class MultiConnManager {
                 if (null == bigBootstrap) {
                     synchronized (lock) {
                         if (null == bigBootstrap) {
-                            initSmallBootstrap();
+                            initBigBootstrap();
                         }
                     }
                 }
