@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class CommFuture implements Future<Object> {
     private CountDownLatch latch = new CountDownLatch(1);
 
-    private CommResponse response;
+    private String response;
 
     @Override
     public boolean cancel(boolean ifCancel) {
@@ -31,10 +31,10 @@ public class CommFuture implements Future<Object> {
     }
 
     @Override
-    public byte[] get() throws InterruptedException {
+    public String get() throws InterruptedException {
         latch.await();
         try {
-            return response.getBytes();
+            return response;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -42,12 +42,12 @@ public class CommFuture implements Future<Object> {
     }
 
     @Override
-    public byte[] get(long timeout, TimeUnit unit) throws InterruptedException {
+    public String get(long timeout, TimeUnit unit) throws InterruptedException {
         boolean b = latch.await(timeout,unit);
-        return response.getBytes();
+        return response;
     }
 
-    public void done(CommResponse response){
+    public void done(String response){
         this.response = response;
         latch.countDown();
     }

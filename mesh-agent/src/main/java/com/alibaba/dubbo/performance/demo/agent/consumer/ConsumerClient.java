@@ -4,9 +4,13 @@ import com.alibaba.dubbo.performance.demo.agent.consumer.commodel.CommFuture;
 import com.alibaba.dubbo.performance.demo.agent.consumer.commodel.CommRequest;
 import com.alibaba.dubbo.performance.demo.agent.consumer.commodel.CommRequestMap;
 import com.alibaba.dubbo.performance.demo.agent.registry.Endpoint;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author HousingLee
@@ -17,6 +21,7 @@ public class ConsumerClient {
 
     private MultiConnManager connManager;
     private Logger logger = LoggerFactory.getLogger(ConsumerClient.class);
+    private static AtomicLong atomicLong = new AtomicLong();
 
     public ConsumerClient(){
         this.connManager = new MultiConnManager();
@@ -29,18 +34,20 @@ public class ConsumerClient {
 
         logger.info("After ConsumerClient getChannel");
 
-        String data = interfaceName+";"+method+";"+parameterTypesString+";"+parameter;
-        CommRequest request = new CommRequest();
-        request.setData(data);
+        long id = atomicLong.getAndIncrement();
+
+        String data = String.valueOf(id)+";"+interfaceName+";"+method+";"+parameterTypesString+";"+parameter;
+        //CommRequest request = new CommRequest();
+        //request.setData(data);
 
         CommFuture future = new CommFuture();
-        CommRequestMap.put(String.valueOf(request.getId()),future);
+        CommRequestMap.put(String.valueOf(id),future);
 
-        channel.writeAndFlush(request);
+        channel.writeAndFlush(Unpooled.copiedBuffer(data, CharsetUtil.UTF_8));
 
         logger.info("After ConsumerClient writeAndFlush");
 
-        byte[] result = null;
+        String result = null;
 
         try {
             logger.info("Before ConsumerClient future.get()");
@@ -50,7 +57,7 @@ public class ConsumerClient {
             e.printStackTrace();
         }
 
-        String s = new String(result);
-        return Integer.valueOf(s);
+        //String s = new String(result);
+        return Integer.valueOf(result);
     }
 }
