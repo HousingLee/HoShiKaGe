@@ -27,7 +27,9 @@ public class AgentApp {
             }
 
         }
+        if(type.equals("consumer")){
+            SpringApplication.run(AgentApp.class,args);
+        }
 
-        SpringApplication.run(AgentApp.class,args);
     }
 }
