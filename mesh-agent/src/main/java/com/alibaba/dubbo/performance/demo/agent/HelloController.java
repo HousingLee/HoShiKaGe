@@ -53,8 +53,11 @@ public class HelloController {
                 }
             }
 
+
+
             // 简单的负载均衡，随机取一个
             Endpoint endpoint = endpoints.get(random.nextInt(endpoints.size()));
+            logger.info(type + " get a endpoint with ip " +endpoint.getHost() + ",its size is "+endpoint.getSize());
             return client.invoke(endpoint,interfaceName,method,parameterTypesString,parameter);
         }
         else {

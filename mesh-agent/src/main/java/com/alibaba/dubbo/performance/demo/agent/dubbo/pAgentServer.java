@@ -12,6 +12,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author HousingLee
@@ -22,6 +24,8 @@ public class pAgentServer {
     //private static IRegistry registry = new EtcdRegistry(System.getProperty("etcd.url"));
 
     private static RpcClient rpcClient = new RpcClient();
+
+    private Logger logger = LoggerFactory.getLogger(pAgentServer.class);
 
     public static RpcClient getRpcClient(){
         return rpcClient;
@@ -43,6 +47,9 @@ public class pAgentServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             ChannelFuture f = b.bind(port).sync();
+
+            String size = System.getProperty("server.size");
+            logger.info(size +" provider agents starts and bind finished");
 
             f.channel().closeFuture().sync();
         } finally {

@@ -7,6 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author HousingLee
@@ -15,6 +17,7 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class pAgentServerHandler extends ChannelInboundHandlerAdapter {
     private HttpRequest request;
+    private Logger logger = LoggerFactory.getLogger(pAgentServerHandler.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg){
@@ -31,8 +34,13 @@ public class pAgentServerHandler extends ChannelInboundHandlerAdapter {
 
         String data = (String)in.getData();
         String[] params = data.split(";");
+
+        String size = System.getProperty("server.size");
+        logger.info(size+" provider get a data now");
+
         try {
             result = pAgentServer.getRpcClient().invoke(params[0],params[1],params[2],params[3]);
+            logger.info("pAgentServer.getRpcClient().invoke");
         }catch (Exception e){
             e.printStackTrace();
         }
