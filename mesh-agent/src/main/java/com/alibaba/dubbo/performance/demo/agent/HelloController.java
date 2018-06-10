@@ -24,12 +24,19 @@ public class HelloController {
     private IRegistry registry = new EtcdRegistry(System.getProperty("etcd.url"));
 
     //private RpcClient rpcClient = new RpcClient(registry);
-    private static ConsumerClient client = new ConsumerClient();
+    private static ConsumerClient client;
 
     private Random random = new Random();
     private List<Endpoint> endpoints = null;
     private Object lock = new Object();
     //private OkHttpClient httpClient = new OkHttpClient();
+
+    static {
+        String type = System.getProperty("type");
+        if("consumer".equals(type)){
+            client = new ConsumerClient();
+        }
+    }
 
     @RequestMapping(value = "")
     public Object invoke(@RequestParam("interface") String interfaceName,
