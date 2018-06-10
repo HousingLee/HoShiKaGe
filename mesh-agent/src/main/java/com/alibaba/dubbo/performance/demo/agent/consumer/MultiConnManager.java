@@ -22,63 +22,100 @@ public class MultiConnManager {
     private EventLoopGroup midEventLoopGroup = new NioEventLoopGroup(2);
     private EventLoopGroup bigEventLoopGroup = new NioEventLoopGroup(4);
 
-    private  Bootstrap[] bootstraps = new Bootstrap[3];
+    //private  Bootstrap[] bootstraps = new Bootstrap[3];
+    private  volatile Bootstrap smallBootstrap;
+    private  volatile Bootstrap midBootstrap;
+    private  volatile Bootstrap bigBootstrap;
 
-    private Channel[] channels = new Channel[3];
+    //private Channel[] channels = new Channel[3];
+    private volatile Channel smallChannel;
+    private volatile Channel midChannel;
+    private volatile Channel bigChannel;
 
-    private Object[] locks = new Object[3];
+    private Object lock = new Object();
+
+    //private Object[] locks = new Object[3];
 
     public MultiConnManager(){}
 
     public Channel getChannel(Endpoint endpoint) throws Exception {
-        int i = 2;
 
         switch (endpoint.getSize()){
             case "small":
-                i = 0;
-                break;
+                if (null != smallChannel) {
+                    return smallChannel;
+                }
+
+                if (null == smallBootstrap) {
+                    synchronized (lock) {
+                        if (null == smallBootstrap) {
+                            initSmallBootstrap();
+                        }
+                    }
+                }
+
+                if (null == smallChannel) {
+                    synchronized (lock){
+                        if (null == smallChannel){
+                            smallChannel = smallBootstrap.connect(endpoint.getHost(), endpoint.getPort()).sync().channel();
+                        }
+                    }
+                }
+
+                return smallChannel;
+
             case "mid":
-                i = 1;
-                break;
-            default:
-                i = 2;
-        }
+                if (null != midChannel) {
+                    return midChannel;
+                }
 
-
-        if (null != channels[i]) {
-            return channels[i];
-        }
-
-        if (null == bootstraps[i]) {
-            synchronized (locks[i]) {
-                if (null == bootstraps[i]) {
-                    if(i==0){
-                        initSmallBootstrap();
-                    }
-                    else if(i==1){
-                        initMidBootstrap();
-                    }
-                    else{
-                        initBigBootstrap();
+                if (null == midBootstrap) {
+                    synchronized (lock) {
+                        if (null == midBootstrap) {
+                            initSmallBootstrap();
+                        }
                     }
                 }
-            }
-        }
 
-        if (null == channels[i]) {
-            synchronized (locks[i]){
-                if (null == channels[i]){
-                    channels[i] = bootstraps[i].connect(endpoint.getHost(), endpoint.getPort()).sync().channel();
+                if (null == midChannel) {
+                    synchronized (lock){
+                        if (null == midChannel){
+                            midChannel = midBootstrap.connect(endpoint.getHost(), endpoint.getPort()).sync().channel();
+                        }
+                    }
                 }
-            }
+
+                return midChannel;
+
+                default:
+                if (null != bigChannel) {
+                    return bigChannel;
+                }
+
+                if (null == bigBootstrap) {
+                    synchronized (lock) {
+                        if (null == bigBootstrap) {
+                            initSmallBootstrap();
+                        }
+                    }
+                }
+
+                if (null == bigChannel) {
+                    synchronized (lock){
+                        if (null == bigChannel){
+                            bigChannel = bigBootstrap.connect(endpoint.getHost(), endpoint.getPort()).sync().channel();
+                        }
+                    }
+                }
+
+                return bigChannel;
         }
 
-        return channels[i];
     }
 
     public void initSmallBootstrap() {
 
-        bootstraps[0] = new Bootstrap()
+        smallBootstrap = new Bootstrap()
                 .group(smallEventLoopGroup)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
@@ -94,7 +131,7 @@ public class MultiConnManager {
 
     public void initMidBootstrap() {
 
-        bootstraps[1] = new Bootstrap()
+        midBootstrap = new Bootstrap()
                 .group(midEventLoopGroup)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
@@ -110,7 +147,7 @@ public class MultiConnManager {
 
     public void initBigBootstrap() {
 
-        bootstraps[2] = new Bootstrap()
+        bigBootstrap = new Bootstrap()
                 .group(bigEventLoopGroup)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
