@@ -56,7 +56,10 @@ public class pAgentServerHandler extends ChannelInboundHandlerAdapter {
         String res = new String(result);
         resString = params[0] + "," + res;
 
+
+
         ctx.writeAndFlush(Unpooled.copiedBuffer(resString, CharsetUtil.UTF_8));
+        logger.info(size+" pAgentServer return the data:"+resString);
     }
 
     @Override

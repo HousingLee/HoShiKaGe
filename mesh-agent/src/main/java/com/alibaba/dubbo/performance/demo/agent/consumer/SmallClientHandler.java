@@ -7,6 +7,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author HousingLee
@@ -14,6 +16,7 @@ import io.netty.util.CharsetUtil;
  * @date 2018/6/5下午3:16
  */
 public class SmallClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+    private Logger logger = LoggerFactory.getLogger(SmallClientHandler.class);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx,ByteBuf in){
@@ -29,6 +32,7 @@ public class SmallClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
         if(future != null){
             CommRequestMap.remove(requestId);
             future.done(ress[1]);
+            logger.info("SmallClient receive data from PA:"+ress[0]+","+ress[1]);
         }
     }
 }

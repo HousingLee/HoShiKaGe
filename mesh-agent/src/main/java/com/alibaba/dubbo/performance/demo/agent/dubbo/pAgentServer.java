@@ -43,7 +43,7 @@ public class pAgentServer {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new pAgentServerHandler());
                         }
-                    }).option(ChannelOption.SO_BACKLOG, 128)
+                    }).option(ChannelOption.SO_BACKLOG, 128000)
                     .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             ChannelFuture f = b.bind(port).sync();
