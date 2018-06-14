@@ -108,12 +108,12 @@ public class EtcdRegistry implements IRegistry{
             }*/
 
         }
-        endpoints.add(new Endpoint("10.10.10.5",30000,"big"));
-        endpoints.add(new Endpoint("10.10.10.5",30000,"big"));
-        endpoints.add(new Endpoint("10.10.10.5",30000,"big"));
-        endpoints.add(new Endpoint("10.10.10.4",30000,"mid"));
-        endpoints.add(new Endpoint("10.10.10.4",30000,"mid"));
-        endpoints.add(new Endpoint("10.10.10.3",30000,"small"));
+        endpoints.add(new Endpoint("10.10.10.5",30010,"big"));
+        endpoints.add(new Endpoint("10.10.10.5",30010,"big"));
+        endpoints.add(new Endpoint("10.10.10.5",30010,"big"));
+        endpoints.add(new Endpoint("10.10.10.4",30010,"mid"));
+        endpoints.add(new Endpoint("10.10.10.4",30010,"mid"));
+        endpoints.add(new Endpoint("10.10.10.3",30010,"small"));
 
 
         return endpoints;

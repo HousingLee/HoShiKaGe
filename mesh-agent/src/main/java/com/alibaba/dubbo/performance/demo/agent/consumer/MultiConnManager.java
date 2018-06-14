@@ -57,7 +57,7 @@ public class MultiConnManager {
                 if (null == smallChannel) {
                     synchronized (lock){
                         if (null == smallChannel){
-                            smallChannel = smallBootstrap.connect(endpoint.getHost(), endpoint.getPort()).sync().channel();
+                            smallChannel = smallBootstrap.connect(endpoint.getHost(), endpoint.getPort()+10).sync().channel();
                         }
                     }
                 }
@@ -80,7 +80,7 @@ public class MultiConnManager {
                 if (null == midChannel) {
                     synchronized (lock){
                         if (null == midChannel){
-                            midChannel = midBootstrap.connect(endpoint.getHost(), endpoint.getPort()).sync().channel();
+                            midChannel = midBootstrap.connect(endpoint.getHost(), endpoint.getPort()+10).sync().channel();
                         }
                     }
                 }
@@ -103,7 +103,7 @@ public class MultiConnManager {
                 if (null == bigChannel) {
                     synchronized (lock){
                         if (null == bigChannel){
-                            bigChannel = bigBootstrap.connect(endpoint.getHost(), endpoint.getPort()).sync().channel();
+                            bigChannel = bigBootstrap.connect(endpoint.getHost(), endpoint.getPort()+10).sync().channel();
                         }
                     }
                 }
